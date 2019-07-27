@@ -1,7 +1,7 @@
 package util
 
-import java.io.ByteArrayInputStream
-import java.io.IOException
+import com.alibaba.fastjson.JSONObject
+import java.io.*
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -10,6 +10,10 @@ import java.sql.SQLException
 import java.text.SimpleDateFormat
 import java.util.Date
 import kotlin.experimental.and
+import java.io.IOException
+import java.io.FileInputStream
+import java.text.ParseException
+
 
 object StringUtil {
 
@@ -35,6 +39,20 @@ object StringUtil {
         val sdf = SimpleDateFormat("yyyy/MM/dd-HH:mm:ss")
         time = sdf.format(date)
         return time
+    }
+
+    fun getTime(s: String?): Date? {
+        if (s == null) {
+            return null
+        }
+
+        return try {
+            val sdf = SimpleDateFormat("yyyy/MM/dd-HH:mm:ss")
+            sdf.parse(s)
+        } catch (e: ParseException){
+            null
+        }
+
     }
 
     fun getMd5(input: String): String? {
@@ -71,4 +89,41 @@ object StringUtil {
         //字符数组组合成字符串返回
         return String(resultCharArray)
     }
+
+    fun json(shortcut: Shortcut, msg: String, data: HashMap<String, String>?=null): String {
+        val map = JSONObject()
+        map["shortcut"] = shortcut.name
+        map["msg"] = msg
+        if(data!=null){
+            map["data"] = JSONObject(data as Map<String, Any>?)
+        }
+        return map.toJSONString()
+    }
+
+    fun jsonFromFile(file: File): JSONObject? {
+        val s: String
+        try {
+            val fileReader = FileReader(file)
+            val reader = InputStreamReader(FileInputStream(file), "utf-8")
+            var ch: Int
+            val sb = StringBuffer()
+            do {
+                ch = reader.read()
+                if(ch == -1){
+                    break
+                }
+                sb.append(ch.toChar())
+            } while (true)
+            fileReader.close()
+            reader.close()
+            s = sb.toString()
+            return JSONObject.parseObject(s)
+        } catch (e: IOException) {
+            e.printStackTrace()
+            return null
+        }
+    }
+
+
+
 }
