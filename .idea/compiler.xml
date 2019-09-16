@@ -9,7 +9,7 @@
         <module name="TTY_COMMUNITY" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="11">
       <module name="TTY_COMMUNITY" target="1.5" />
     </bytecodeTargetLevel>
   </component>
